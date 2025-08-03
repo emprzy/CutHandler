@@ -1,0 +1,32 @@
+# Python bytecode and cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environment folders
+.venv/
+venv/
+env/
+
+# Build artifacts
+build/
+dist/
+*.egg-info/
+
+# IDE and editor directories
+.idea/
+.vscode/
+
+# Test output
+.pytest_cache/
+htmlcov/
+
+# OS-specific files
+.DS_Store  # macOS
+Thumbs.db  # Windows
+
+# logo ideas (TEMP)
+logoidea1.png
+logoidea2.png
+logoidea3.png
+logoidea4.png

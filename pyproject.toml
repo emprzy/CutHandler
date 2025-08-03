@@ -1,0 +1,22 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "CutHandler"
+version = "0.1.0"
+authors = [
+  { name="Emily Przykucki", email="emily.przykucki@gmail.com" },
+]
+description = "A tool to automatically clip ultimate frisbee videos based on time stamps provided in a config file."
+readme = "README.md"
+requires-python = ">=3.9" 
+dependencies = [
+  "pandas", 
+]
+
+[project.scripts]
+cuthandler = "main:main"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
