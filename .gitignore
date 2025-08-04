@@ -22,8 +22,10 @@ dist/
 htmlcov/
 
 # OS-specific files
-.DS_Store  # macOS
-Thumbs.db  # Windows
+#MacOS
+.DS_Store  
+# Windows
+Thumbs.db  
 
 # logo ideas (TEMP)
 logoidea1.png
