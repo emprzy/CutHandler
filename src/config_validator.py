@@ -83,7 +83,7 @@ class ValidatedConfig:
             for bad_file, reason in invalid_file_paths.items():
                 print(f"{bad_file}: {reason}")
             print("\n")
-            raise FileNotFoundError("Invalid file paths detected. Please confirm all fiile_paths correctly point to audio/video files.")
+            raise FileNotFoundError("Invalid file paths detected. Please confirm all file_paths correctly point to audio/video files.")
         
 
     def _add_filename_column(self):
@@ -92,7 +92,14 @@ class ValidatedConfig:
         file_names = []
         for file_path in file_paths:
             path = pathlib.Path(file_path)
-            file_names.append(path.name)
+            file_names.append(path.stem)
         self.config_df['file_name'] = file_names
 
+
+    def _add_unique_index_column(self):
+            """Add a unique index for each entry in config file."""
+            start_times = self.config_df['start_seconds'].astype(int).astype(str).str.zfill(6)
+            end_times = self.config_df['end_seconds'].astype(int).astype(str).str.zfill(6)
+    
+            self.config_df['unique_index'] = '_CH_' + start_times + '-' + end_times
 
