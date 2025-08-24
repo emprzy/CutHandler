@@ -48,7 +48,7 @@ def group_and_clip(
             # Save clips as XML-encoded Premiere Pro timeline
             if xml: 
                 file_ext = ".xml"
-                output_filename = f"{base_name}{file_ext}" 
+                output_filename = f"{base_name}_{row.unique_index}{file_ext}" 
                 output_path = output_directory / output_filename
                 if output_path.exists(): # TODO: for XML, we'll probably just want to add to the sequence, not fail 
                     unclipped_files_due_to_preexisting_file_path.append(str(output_path))
@@ -58,7 +58,7 @@ def group_and_clip(
             # Save clips individually with ffmpeg
             else: 
                 file_ext = pathlib.Path(row.file_path).suffix
-                output_filename = f"{base_name}{file_ext}" 
+                output_filename = f"{base_name}_{row.unique_index}{file_ext}" 
                 output_path = output_directory / output_filename
                 if output_path.exists():
                     unclipped_files_due_to_preexisting_file_path.append(str(output_path))
