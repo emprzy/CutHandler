@@ -34,7 +34,8 @@ def main():
                         required = False)
     parser.add_argument("--xml", 
                         action="store_true", 
-                        help="If provided, instructs CutHandler to clip footage into an Adobe Premiere Pro sequence.")
+                        help="If provided, instructs CutHandler to clip footage into an Adobe Premiere Pro sequence.",
+                        required = False)
     args = parser.parse_args()
 
     # First check to validate template syntax
@@ -42,6 +43,7 @@ def main():
     validate_template_syntax(args.custom_output_grouping)
 
     # Extract column names from optional file naming template, second template syntax check
+    file_naming_columns = []
     file_naming_columns += extract_template_keys(args.custom_filename_template)
     if not file_naming_columns:
         raise ValueError(
@@ -49,6 +51,7 @@ def main():
             "Involved columns must be in format '{col1}_{col2}...' and contain no spaces, hyphens, or special characters.")
 
     # Extract column names from optional output grouping template, second template syntax check
+    output_grouping_columns = []
     output_grouping_columns += extract_template_keys(args.custom_output_grouping)
     if not output_grouping_columns:
         raise ValueError(
@@ -62,6 +65,7 @@ def main():
     validated_config_object._standardize_timestamps()
     validated_config_object._confirm_file_path_existence()
     validated_config_object._add_filename_column()
+    validated_config_object._add_unique_index_column()
     config = validated_config_object.config_df
 
     # Iteratively clip from all files 
