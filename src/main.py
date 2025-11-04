@@ -70,12 +70,15 @@ def main():
 
     # Iteratively clip from all files 
     xml = args.xml
-    group_and_clip(
-        config=config, 
-        output_grouping_columns=output_grouping_columns,
-        file_naming_columns=file_naming_columns,
-        base_output_path=args.output_path,
-        xml=xml)
+    if xml:
+        pass
+    else:
+        group_and_clip(
+            config=config, 
+            output_grouping_columns=output_grouping_columns,
+            file_naming_columns=file_naming_columns,
+            base_output_path=args.output_path,
+            )
 
 
 
