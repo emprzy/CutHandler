@@ -10,34 +10,49 @@ def _get_video_properties(file_path: str) -> dict:
     Uses ffprobe to get essential video properties.
 
     Returns a dictionary with:
-    - width (int)
-    - height (int)
-    - timebase (str, e.g., "24")
-    - duration_frames (int)
-    - pathurl (str, formatted for XML)
-    - file_name (str)
+    - width 
+    - height 
+    - timebase 
+    - duration_frames 
+    - pathurl
+    - file_name
     """
     command = [
         'ffprobe',
         '-v', 'error',
-        '-select_streams', 'v:0', # Only look at the first video stream
-        '-show_entries', 'stream=width,height,r_frame_rate,duration_ts',
+        '-show_entries', 'stream=width,height,r_frame_rate,duration_ts,codec_type,channels',
         '-of', 'json',
         str(file_path)
     ]
     
     try:
         result = subprocess.run(command, capture_output=True, text=True, check=True)
-        data = json.loads(result.stdout)["streams"][0]
+        streams = json.loads(result.stdout).get("streams", [])
+        video_data = None
+        audio_data = None
+        for stream in streams:
+            codec_type = stream.get("codec_type")
+            if codec_type == "video" and not video_data:
+                video_data = stream
+            elif codec_type == "audio" and not audio_data:
+                audio_data = stream
         
-        timebase = data['r_frame_rate'].split('/')[0]
-        duration_frames = int(data['duration_ts'])
+        if not video_data:
+            raise RuntimeError(f"No video stream found in {file_path}")
+        if not audio_data:
+            raise RuntimeError(f"No audio stream found in {file_path}")
+        if audio_data.get("channels") != 2:
+            raise RuntimeError(f"cuthandler-xml does not presently support files with more than 2 audio channels. {file_path} has {audio_data.get("channels")}")
+        
+        
+        timebase = video_data['r_frame_rate'].split('/')[0]
+        duration_frames = int(video_data['duration_ts'])
         p_path = pathlib.Path(file_path)
         path_url = p_path.as_uri()
 
         return {
-            "width": int(data['width']),
-            "height": int(data['height']),
+            "width": int(video_data['width']),
+            "height": int(video_data['height']),
             "timebase": timebase, 
             "duration_frames": duration_frames,
             "pathurl": path_url,
@@ -93,13 +108,11 @@ def _create_xml_shell(video_props: dict) -> tuple:
     f_v_sample = ET.SubElement(f_video, "samplecharacteristics")
     ET.SubElement(f_v_sample, "width").text = str(video_props['width'])
     ET.SubElement(f_v_sample, "height").text = str(video_props['height'])
-    # --- 👇 ADD THIS NEW BLOCK HERE 👇 ---
     f_audio = ET.SubElement(f_media, "audio")
-    ET.SubElement(f_audio, "channelcount").text = "2" # Assume stereo
+    ET.SubElement(f_audio, "channelcount").text = "2" # assumes two audio channels
     a_sample = ET.SubElement(f_audio, "samplecharacteristics")
     ET.SubElement(a_sample, "depth").text = "16"
-    ET.SubElement(a_sample, "samplerate").text = "48000" # Common default
-    # --- 👆 END OF NEW BLOCK 👆 ---
+    ET.SubElement(a_sample, "samplerate").text = "48000" 
     
     return root, sequence, video_track, audio_track_1, audio_track_2, file_el, file_id
 
@@ -209,32 +222,23 @@ def group_and_xml(
             current_timeline_frame = 0
             timebase_int = int(video_props['timebase'])
 
-
-            # Add individual clips to XML
             for clip_index, row in enumerate(df.itertuples(), start=1):
                 
-                # --- A. Calculate Frame Numbers ---
-                # Convert clip start/end times from seconds (float) to frames (int)
                 in_frame = int(row.start_seconds * timebase_int)
                 out_frame = int(row.end_seconds * timebase_int)
                 
-                # Calculate timeline placement
                 timeline_start_frame = current_timeline_frame
                 clip_duration_frames = out_frame - in_frame
                 timeline_end_frame = timeline_start_frame + clip_duration_frames
 
-                # --- B. Create Unique IDs ---
-                # Use the row's unique_index for consistent, unique IDs
                 master_id = f"master-{row.unique_index}"
                 v_clip_id = f"v-clip-{row.unique_index}"
                 a1_clip_id = f"a1-clip-{row.unique_index}"
                 a2_clip_id = f"a2-clip-{row.unique_index}"
                 
-                # --- C. Create Clip Items ---
                 clip_name = video_props['file_name']
                 timebase = video_props['timebase']
 
-                # Create Video Clip (V1)
                 v_clip = _add_clip_item(
                     parent_track=v_track, item_id=v_clip_id, master_id=master_id,
                     name=clip_name, file_id=file_id, timebase=timebase,
@@ -242,47 +246,31 @@ def group_and_xml(
                     in_frame=in_frame, out_frame=out_frame
                 )
                 if is_first_clip:
-                    # Remove the simple <file id.../> reference
                     file_ref = v_clip.find("file")
                     v_clip.remove(file_ref)
 
-                    # Add the full <file ...>...</file> definition
                     v_clip.append(file_element)
                     is_first_clip = False
                 
-                # Create Audio Clip 1 (A1)
                 a1_clip = _add_clip_item(
                     parent_track=a_track1, item_id=a1_clip_id, master_id=master_id,
                     name=clip_name, file_id=file_id, timebase=timebase,
                     start_frame=timeline_start_frame, end_frame=timeline_end_frame,
                     in_frame=in_frame, out_frame=out_frame
                 )
-                # Add audio-specific tag
                 ET.SubElement(a1_clip, "sourcetrack").text = "1"
-                
-                # Create Audio Clip 2 (A2)
                 a2_clip = _add_clip_item(
                     parent_track=a_track2, item_id=a2_clip_id, master_id=master_id,
                     name=clip_name, file_id=file_id, timebase=timebase,
                     start_frame=timeline_start_frame, end_frame=timeline_end_frame,
                     in_frame=in_frame, out_frame=out_frame
                 )
-                # Add audio-specific tag
                 ET.SubElement(a2_clip, "sourcetrack").text = "2"
-
-                # --- D. Link the clips together ---
                 _add_links(v_clip, v_clip_id, a1_clip_id, a2_clip_id, clip_index)
                 _add_links(a1_clip, v_clip_id, a1_clip_id, a2_clip_id, clip_index)
                 _add_links(a2_clip, v_clip_id, a1_clip_id, a2_clip_id, clip_index)
-
-                # --- E. Update Timeline "Playhead" ---
-                # Move the playhead to the end of the clip we just added
                 current_timeline_frame = timeline_end_frame
-            
-            # --- END OF NEW LOGIC ---
 
-
-            # Set the final sequence duration
             ET.SubElement(sequence, "duration").text = str(current_timeline_frame)
             # Write the XML file
             output_xml_path = base_output_path / f"{file_name_stem}.xml"
