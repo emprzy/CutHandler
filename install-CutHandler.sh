@@ -3,10 +3,10 @@
 echo "🚀 Starting CutHandler setup..."
 
 # --- 1. Check for and install ffmpeg ---
-echo "Checking for ffmpeg..."
+echo "Checking for ffmpeg and ffprobe..."
 
-if ! command -v ffmpeg &> /dev/null; then
-    echo "ffmpeg not found. Attempting to install..."
+if ! command -v ffmpeg &> /dev/null || ! command -v ffprobe &> /dev/null; then
+    echo "ffmpeg and/or ffprobe not found. Attempting to install..."
 
     # Check for OS and use the appropriate package manager
     if [[ "$OSTYPE" == "darwin"* ]]; then
@@ -27,13 +27,13 @@ if ! command -v ffmpeg &> /dev/null; then
     fi
 
     # Verify installation
-    if ! command -v ffmpeg &> /dev/null; then
-        echo "ffmpeg installation failed. Please install it manually."
+    if ! command -v ffmpeg &> /dev/null || ! command -v ffprobe &> /dev/null; then
+        echo "ffmpeg/ffprobe installation failed. Please install it manually."
         exit 1
     fi
-    echo "ffmpeg installed successfully."
+    echo "ffmpeg/ffprobe installed successfully."
 else
-    echo "✅ ffmpeg is already installed."
+    echo "✅ ffmpeg and ffprobe are already installed."
 fi
 
 
@@ -48,4 +48,4 @@ else
     exit 1
 fi
 
-echo -e "\n🎉 Installation complete! You can now use the 'cuthandler' command."
+echo -e "\n🎉 Installation complete! You can now use 'cuthandler-clip' and 'cuthandler-xml' commands."
