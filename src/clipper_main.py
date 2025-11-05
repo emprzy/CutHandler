@@ -1,3 +1,5 @@
+"""Entry point for cuthandler-clip."""
+
 import argparse
 
 from parse_custom_naming_strings import extract_template_keys, validate_template_syntax

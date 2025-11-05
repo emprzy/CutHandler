@@ -1,6 +1,5 @@
 """Extract column names from CL-passed arg of a file naming template."""
 
-
 import re
 
 

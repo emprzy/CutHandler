@@ -1,3 +1,5 @@
+"""Entry point for cuthandler-xml"""
+
 import argparse
 
 from config_validator import ValidatedConfig

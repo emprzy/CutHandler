@@ -1,5 +1,4 @@
-"""Documentation"""
-
+"""Function to handle individual file clipping process (cuthandler-clip)."""
 
 import subprocess
 import pathlib
