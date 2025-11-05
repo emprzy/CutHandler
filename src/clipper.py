@@ -23,9 +23,10 @@ def group_and_clip(
         file_naming_columns: 
             Columns to be used in custom file name structure 
             (default is the name of the file being clipped from)
+        base_output_path: Base output path where XML file(s) will be saved
     """
     
-    print("Beginning clipping process..")
+    print("Beginning clipping process...")
 
     base_output_path = pathlib.Path(base_output_path)
     filename_template = "_".join([f"{{{col}}}" for col in file_naming_columns])
