@@ -24,10 +24,11 @@ MEDIA_EXTENSIONS = AUDIO_EXTENSIONS.union(VIDEO_EXTENSIONS)
 
 class ValidatedConfig:
 
-    def __init__(self, config_path: str): 
+    def __init__(self, config_path: str, pipeline: str): 
         """
         # TODO
         """
+        self.pipeline = pipeline
         self.config_path = pathlib.Path(config_path)
         if not self.config_path.exists():
             raise FileNotFoundError(
@@ -48,7 +49,7 @@ class ValidatedConfig:
                              "Please ensure all columns are lower case and spelled correctly.")
 
 
-    def _standardize_timestamps(self): # TODO: add 1.5 sec buffer on either end
+    def _standardize_timestamps(self): 
         """Standardize the time stamps in config, add columns for start/end second markers."""
         try:
             self.config_df['start_td'] = pd.to_timedelta(self.config_df['timestamp_start'])
@@ -65,6 +66,13 @@ class ValidatedConfig:
         if not invalid_duration_rows.empty:
             raise ValueError("Invalid timestamp durations found; 'timestamp_end' must occur after 'timestamp_start'.\n"
                              f"Problematic rows:\n{invalid_duration_rows[['timestamp_start', 'timestamp_end']]}")
+        
+        if self.pipeline == "clip": # only do if going through cuthandler-clip
+            # Add 1.5 sec buffer on either end, if that puts it below zero then just leave it at zero
+            self.config_df['end_seconds'] = self.config_df['end_seconds'] + 1.5
+            self.config_df['start_seconds'] = self.config_df['start_seconds'] - 1.5
+            self.config_df['start_seconds'] = self.config_df['start_seconds'].clip(lower=0)
+
 
     def _confirm_file_path_existence(self):
         """Iterative over all files in file_path column, ensure they are all valid paths."""
