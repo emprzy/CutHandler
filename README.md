@@ -39,8 +39,22 @@ On Windows, you can run:
 
 ## Configuration file set-up
 
-## `cuthandler-clip` usage
+All executions of CutHandler require you to have a valid **configuration file**. Configuration files are the instructions that tell CutHandler which videos you would like to be clipped, and at what timestamps you would like them to be clipped at – each row represents one individual clip. They are very simple to make, and only require the following three columns:
 
-## `cuthandler-xml` usage
+| Column name (**case-sensitive!**) | Description |
+|---------------------------------|-------------|
+| `timestamp_start` | The start time of clip, in a recognized datetime format |
+| `timestamp_end` | The end time of the clip, in a recognized datetime format | 
+| `file_path` | The **ABSOLUTE** path to the parent video file to be clipped from | 
 
-## Troubleshooting
+Valid configuration files can have more columns, but they are required to have these three **named exactly as you see them here**. An
+
+## `cuthandler-clip` 
+
+## `cuthandler-xml`
+
+## Troubleshooting (coming soon)
+* common errors
+* valid date formats for timestamps
+* dep list
+* raise an issue if you need
