@@ -21,7 +21,7 @@ def main():
                         required = True)
     parser.add_argument("-cft", "--custom-filename-template",
                         type = str,
-                        help = "Using column names from the configuration file, optionally specify an output filename template in the following format '{col1}_{col2}_{col3}', be sure to type the quotations, brackets, underscores, and correct cases. File extension and index will be added automatically. Default is the name of the file to be clipped from, followed by the timestamp index.",
+                        help = "Using column names from the configuration file, optionally specify an output filename template in the following format '{col1}_{col2}_{col3}', be sure to type the quotations, brackets, underscores, and correct cases. File extension and a timestamp index will be added automatically for uniqueness. Default is the name of the file to be clipped from, followed by the timestamp index.",
                         default = "{file_name}", 
                         required = False)
     parser.add_argument("-cog", "--custom-output-grouping",

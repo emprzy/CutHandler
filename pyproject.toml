@@ -16,8 +16,8 @@ dependencies = [
 ]
 
 [project.scripts]
-cuthandler-clip = "clipper_main:main"
-cuthandler-xml = "xml_main:main"
+cuthandler-clip = "cuthandler.clipper_main:main"
+cuthandler-xml = "cuthandler.xml_main:main"
 
-[tool.setuptools]
-package-dir = {"" = "src"}
+[tool.setuptools.packages.find]
+where = ["src"]
