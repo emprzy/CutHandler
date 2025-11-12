@@ -10,7 +10,7 @@ Jump to a section:
 * [Configuration file set-up](#configuration-file-set-up)
 * [Using cuthandler-clip](#cuthandler-clip)
 * [Using cuthandler-xml](#cuthandler-xml)
-* [Troubleshooting](#troubleshooting-coming-soon)
+* [Troubleshooting and dependency list](#troubleshooting-coming-soon)
 
 ## Installation 
 <small>...version 0.1.0...better installation coming soon</small>
