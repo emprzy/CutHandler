@@ -93,9 +93,37 @@ You will notice the file name `nationals_colorado-quarterfinal__CH_000043-000050
 
 ## `cuthandler-xml`
 
+`cuthandler-xml` is the command line command to use when you would like CutHandler to store your clips in XML files (likely to be used as an import into Adobe Premiere Pro or Final Cut Pro). This pipeline will process all of your clippings and store them in XML metadata, giving you "full handles" (ability to extend infinitely in either direction of the clip) when you open the XML file in a video editor.
+
+Pros:
+* Great for editing highlight videos, or for when your final product requires some degree of manual compilation.
+* Allows for less stringent timestamping; you can be more crude with your timestamps because you will be able to extend clips later in an editor.
+
+Cons:
+* Mandates that you continue to store the parent video file in the same path on your machine, otherwise the output XML file will not be able to find the source file later when it is used in a video editor.
+* Has a less modular output grouping system – in an effort to preserve exact video settings of the parent file, `cuthandler-xml` will group output only by parent file. That is, there will be one XML output file per parent file in your config.
+
+`cuthandler-xml` has only two command line options (print this in terminal with `cuthandler-xml --help`):
+
+| Command | Description | Required? | Default setting|
+|---------|-------------|-----------|-----------|
+| `--config-path`, `-c` | Absolute path to your `.csv` config file | Yes | `N/A` |
+| `--output-path`, `-o` | Absolute path to where you would like output to be stored | Yes | `N/A` |
+
+A `cuthandler-xml` command will look like this:
+
+```bash
+cuthandler-xml \
+    --config-path "path/to/config.csv" \
+    --output-path "path/to/output-directory" 
+```
+
+Output XML files will have the same stem name as the parent file. For example, if you had a parent file named `pleiades.mp4`, `cuthandler-xml` will generate an XML file called `pleiades.xml` located at `path/to/output-directory/pleiades.xml`. Again, please note that **you cannot move your parent video files once the XML files encodes that URI (path) because then the XML file will not know where to find the source footage to use during import to a video editor.**
+
 ## Troubleshooting (coming soon)
-* common errors (don't have homebrew, don't have git, python not installed, executable permission denied, XML file can't find your parent files)
+* common errors (don't have homebrew, don't have git, python not installed, executable permission denied, XML file can't find your parent files, unsupported parent file type)
 * valid date formats for timestamps (more importantly, invalid)
 * dep list (Python, Git, Homebrew, ffmpeg/ffprobe, pandas)
+* using an XML file in Adobe premiere pro 
 * If you can't figure something out, need help troubleshooting, or believe there is an error, please [raise an issue](https://github.com/emprzy/CutHandler/issues/new)!
 * Need help pulling raw footage from Ultiworld? [Visit my discussion]().
