@@ -2,8 +2,8 @@
 
 import argparse
 
-from config_validator import ValidatedConfig
-from xmler import group_and_xml
+from .config_validator import ValidatedConfig
+from .xmler import group_and_xml
 
 
 def main():

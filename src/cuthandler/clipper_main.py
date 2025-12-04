@@ -2,9 +2,9 @@
 
 import argparse
 
-from parse_custom_naming_strings import extract_template_keys, validate_template_syntax
-from config_validator import ValidatedConfig
-from clipper import group_and_clip
+from .parse_custom_naming_strings import extract_template_keys, validate_template_syntax
+from .config_validator import ValidatedConfig
+from .clipper import group_and_clip
 
 
 def main(): 
