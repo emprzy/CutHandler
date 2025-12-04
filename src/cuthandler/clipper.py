@@ -55,20 +55,11 @@ def group_and_clip(
 
             duration = end_time - start_time # Calculate the duration
 
-            command = [
-                'ffmpeg',
-                '-n',
-                '-hide_banner',
-                '-loglevel', 'error',
-                # 1. Input file MUST come first for post-input seeking
-                '-i', row.file_path, 
-                # 2. Seek flag (-ss) comes AFTER input flag
-                '-ss', str(start_time),
-                # 3. Use duration (-t) instead of absolute end time (-to)
-                '-t', str(duration), 
-                '-c', 'copy', 
-                output_path 
-            ]
+            command = [
+                'ffmpeg', '-n', '-hide_banner', '-loglevel', 'error', '-i', 
+                row.file_path, '-ss', str(start_time), '-t', str(duration), 
+                '-c', 'copy', output_path
+            ]
 
             try:
                 subprocess.run(command, check=True, timeout=480) # time out after 8 min, if it is hanging or spinning
