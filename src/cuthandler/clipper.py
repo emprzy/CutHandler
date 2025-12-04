@@ -53,16 +53,12 @@ def group_and_clip(
             start_time = row.start_seconds
             end_time = row.end_seconds
 
-            command = [ # TODO: parallel processing for these to make it faster?
-                'ffmpeg',
-                '-n', # do not overwrite any pre-existing files
-                '-hide_banner', # hides mass output      
-                '-loglevel', 'error', # except for errors
-                '-ss', str(start_time),
-                '-i', row.file_path, # confirm this is a safe flag
-                '-to', str(end_time),
-                '-c', 'copy', 
-                output_path 
+            duration = end_time - start_time # Calculate the duration
+
+            command = [
+                'ffmpeg', '-n', '-hide_banner', '-loglevel', 'error', '-i', 
+                row.file_path, '-ss', str(start_time), '-t', str(duration), 
+                '-c', 'copy', output_path
             ]
 
             try:
