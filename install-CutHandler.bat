@@ -54,7 +54,7 @@ IF NOT EXIST "pyproject.toml" (
 )
 
 REM Using 'py -m pip' is the most robust way to call pip on Windows
-py -m pip install .
+py -m pip install -e .
 IF %ERRORLEVEL% NEQ 0 (
     ECHO Error: Python package installation failed.
     GOTO :eof
