@@ -3,7 +3,7 @@ The ultimate auto-clipping tool!
 
 Installation of the CutHandler tool will make two distinct command line commands available for **lossless(!)** and speedy clipping of your footage:
 * `cuthandler-clip` which will clip your source video(s) into individual video files, and
-* `cuthandler-xml` which will encode clippings from your source video(s) into XML files that can be imported and used as a sequence in Adobe Premiere Pro or Final Cut Pro, where all of the clips have full handles.
+* `cuthandler-xml` which will encode clippings from your source video(s) into XML files that can be imported and used as a sequence in Adobe Premiere Pro or Final Cut Pro, where all of the clips have full handles (i.e., you can extend them on either end).
 
 Jump to a section:
 * [Installation steps](#installation)
